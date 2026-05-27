@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Stegbox Login</title>
+
+  <style>
+    body {
+      margin: 0;
+      font-family: 'Courier New', Courier, monospace;
+      background-color: #f0f0f0;
+      height: 100vh;
+    }
+
+    /* SPLIT SCREEN */
+    .split-container {
+      display: flex;
+      width: 100%;
+      height: 100vh;
+    }
+
+    /* LEFT SIDE */
+    .left-side {
+      flex: 1;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      background: white;
+    }
+
+    .left-side img {
+      width: 550px;
+      max-width: 90%;
+      height: auto;
+    }
+
+    /* RIGHT SIDE */
+    .right-side {
+      flex: 1;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+
+    .login-card {
+      background-color: #fff;
+      padding: 40px 60px;
+      border-radius: 20px;
+      border: 1px solid #FD3DB5;
+      box-shadow: 0 4px 15px rgba(253, 61, 181, 0.3);
+      width: 100%;
+      max-width: 450px;
+      text-align: center;
+    }
+
+    .login-card h2 {
+      margin-bottom: 30px;
+      font-size: 1.8em;
+    }
+
+    .login-card input[type="email"],
+    .login-card input[type="password"] {
+      width: 100%;
+      padding: 12px 15px;
+      margin: 10px 0;
+      border-radius: 10px;
+      border: 1px solid #ccc;
+      box-sizing: border-box;
+    }
+
+    .forgot-password {
+      text-align: left;
+      margin: 5px 0 20px;
+      font-size: 0.9em;
+    }
+
+    .forgot-password a {
+      color: #606060;
+      text-decoration: none;
+    }
+
+    .login-card button {
+      width: 100%;
+      padding: 12px;
+      margin-top: 10px;
+      border: 1px solid #ccc;
+      border-radius: 10px;
+      font-size: 16px;
+      cursor: pointer;
+      transition: 0.2s;
+    }
+
+    .login-card button:hover {
+      background-color: #f8f8f8;
+      box-shadow: 0 4px 8px rgba(48, 92, 222, 0.2);
+    }
+
+    .divider {
+      display: flex;
+      align-items: center;
+      text-align: center;
+      margin: 25px 0;
+      color: #888;
+    }
+
+    .divider::before,
+    .divider::after {
+      content: '';
+      flex: 1;
+      border-bottom: 1px solid #eee;
+    }
+
+    .divider:not(:empty)::before {
+      margin-right: 1em;
+    }
+
+    .divider:not(:empty)::after {
+      margin-left: 1em;
+    }
+
+    .button-secondary {
+      background: none;
+      border: 1px solid #305CDE !important;
+      color: #305CDE;
+      font-weight: bold;
+    }
+
+    /* MOBILE */
+    @media (max-width: 768px) {
+      .split-container {
+        flex-direction: column;
+      }
+
+      .left-side {
+        padding: 40px 0;
+      }
+    }
+  </style>
+</head>
+
+<body>
+
+  <div class="split-container">
+
+    <!-- LEFT -->
+    <div class="left-side">
+      <img src="/static/images/stegbox_logo.png" alt="Stegbox Logo">
+    </div>
+
+    <!-- RIGHT -->
+    <div class="right-side">
+
+      <div class="login-card">
+
+        <h2>Welcome to Stegbox</h2>
+
+        {% with messages = get_flashed_messages() %}
+          {% if messages %}
+            <div style="background:#d4edda; border:1px solid #c3e6cb; color:#155724; padding:12px; border-radius:5px; margin-bottom:20px; text-align:left;">
+              {% for message in messages %}
+                <p style="margin:5px 0;">✓ {{ message }}</p>
+              {% endfor %}
+            </div>
+          {% endif %}
+        {% endwith %}
+
+        <form action="/login" method="post">
+          <input type="email" name="email" placeholder="Email" required>
+
+          <input type="password" name="password" placeholder="Password" required>
+
+          <p class="forgot-password">
+            <a href="#">Forgotten password?</a>
+          </p>
+
+          <button type="submit">Log in</button>
+        </form>
+
+        <div class="divider">OR</div>
+
+        <a href="/signup" style="text-decoration:none;">
+          <button type="button" class="button-secondary">
+            Create new account
+          </button>
+        </a>
+
+      </div>
+
+    </div>
+
+  </div>
+
+</body>
+</html>

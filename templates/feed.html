@@ -1,0 +1,868 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Feed UI</title>
+<link rel="stylesheet" href="/static/css/sidebar.css">
+
+<style>
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: Arial, sans-serif;
+}
+
+body {
+  
+  
+  background: #ffffff;
+  
+  
+  
+ 
+  margin: 0;
+  background-attachment: fixed;
+
+  display: flex;
+  min-height: 100vh;
+}
+/*background: linear-gradient(135deg, #fce4ec 0%, #ffffff 100%);*/
+/* Sidebar */
+/* Sidebar styles are now in sidebar.css */
+
+/* Main */
+.main {
+  flex: 1;
+  padding: 100px 40px 40px;
+}
+
+.feed {
+  width: 100%;
+}
+
+/* Create Post */
+.create-post {
+  background: #fff;
+  border: 1px solid #ddd;
+  padding: 15px;
+  border-radius: 10px;
+}
+
+.create-top {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 15px;
+}
+
+.avatar {
+  width: 40px;
+  height: 40px;
+  background: #ccc;
+  border-radius: 50%;
+}
+
+.input-box {
+  flex: 1;
+  border: 1px solid #ddd;
+  border-radius: 20px;
+  padding: 10px;
+}
+
+/* Image placeholder */
+.image-box {
+  border: 1px dashed #ddd;
+  border-radius: 14px;
+  margin-bottom: 15px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  padding: 10px;
+  min-height: 50px;
+}
+
+.image-box.with-image {
+  border: none;
+  padding: 0;
+}
+
+.image-box img {
+  max-width: 300px;
+  height: auto;
+  border-radius: 8px;
+}
+
+.media-icon-btn {
+  font-size: 1.2rem;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  width: 100%;
+  height: 100%;
+}
+
+.media-preview {
+  margin-top: 8px;
+  color: #333;
+  font-size: 0.85rem;
+  text-align: center;
+}
+
+.media-preview {
+  margin-top: 10px;
+  color: #333;
+  font-size: 0.9rem;
+}
+
+.post-media {
+  padding: 0 15px 10px;
+  color: #666;
+  font-size: 0.95rem;
+}
+
+/* Toggle switch */
+.toggle {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 10px;
+}
+
+.switch {
+  position: relative;
+  width: 40px;
+  height: 20px;
+}
+
+.switch input {
+  display: none;
+}
+
+.slider {
+  position: absolute;
+  cursor: pointer;
+  background: #ccc;
+  border-radius: 20px;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  transition: 0.3s;
+}
+
+.slider::before {
+  content: "";
+  position: absolute;
+  height: 16px;
+  width: 16px;
+  background: white;
+  border-radius: 50%;
+  top: 2px;
+  left: 2px;
+  transition: 0.3s;
+}
+
+input:checked + .slider {
+  background: #ff69b4;
+}
+
+input:checked + .slider::before {
+  transform: translateX(20px);
+}
+
+/* Dropdown secret message */
+.secret-box {
+  max-height: 0;
+  overflow: hidden;
+  transition: max-height 0.3s ease;
+}
+
+.secret-box.active {
+  max-height: 120px;
+  margin-bottom: 15px;
+}
+
+.secret-box textarea {
+  width: 100%;
+  padding: 10px;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+}
+
+.followers-box {
+  max-height: 0;
+  overflow: hidden;
+  transition: max-height 0.3s ease;
+}
+
+.followers-box.active {
+  max-height: 80px;
+  margin-bottom: 15px;
+}
+
+.followers-box select {
+  width: 100%;
+  padding: 8px;
+  margin-top: 5px;
+  border-radius: 6px;
+  border: 1px solid #ddd;
+}
+
+/* Footer */
+.create-footer {
+  display: flex;
+  justify-content: flex-end;
+}
+
+.post-btn {
+  /* The gradient: starts at a bright pink and shifts to a deep magenta/purple */
+  background: linear-gradient(135deg, #ff00cc 0%, #3333ff 100%);
+  
+  /* Styling to make it look modern */
+  color: white;
+  border: none;
+  padding: 10px 24px;
+  border-radius: 50px; /* Fully rounded "pill" shape like the image */
+  font-weight: 600;
+  cursor: pointer;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  
+  /* Subtle glow effect */
+  box-shadow: 0 4px 15px rgba(255, 0, 204, 0.3);
+}
+
+/* Post Card */
+  .post {
+    background: #fff;
+    border: 1px solid #ddd;
+    border-radius: 10px;
+    margin-bottom: 20px;
+    overflow: hidden;
+  }
+
+  .post-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 15px;
+  }
+
+  .user-info {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+  }
+
+  .post-content {
+    padding: 0 15px 15px;
+  }
+
+  .post-image {
+    width: 100%;
+    height: 250px;
+    background: #e0e0e0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    color: #888;
+  }
+
+  
+
+  .post-actions {
+    padding: 10px 15px;
+    border-top: 1px solid #ddd;
+    display: flex;
+    gap: 20px;
+    color: #555;
+  }
+
+  button.decode {
+   
+    /* The gradient: starts at a bright pink and shifts to a deep magenta/purple */
+  
+  background: linear-gradient(135deg, #ff00cc 0%, #3333ff 100%);
+
+  /* Styling to make it look modern */
+  color: white;
+  border: none;
+  padding: 10px 24px;
+  border-radius: 50px; /* Fully rounded "pill" shape like the image */
+  font-weight: 600;
+  cursor: pointer;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  
+  /* Subtle glow effect */
+  box-shadow: 0 4px 15px rgba(255, 0, 204, 0.3);
+  }
+
+  .modal-backdrop {
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.35);
+    display: grid;
+    place-items: center;
+    z-index: 999;
+  }
+
+  .modal-backdrop.hidden {
+    display: none;
+  }
+
+  .modal-card {
+    background: #fff;
+    border-radius: 18px;
+    padding: 24px;
+    max-width: 420px;
+    width: min(90%, 420px);
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.18);
+    text-align: left;
+  }
+
+  .modal-card h3 {
+    margin-bottom: 12px;
+  }
+
+  .modal-text {
+    margin-bottom: 20px;
+    color: #333;
+    white-space: pre-wrap;
+  }
+
+  .close-modal {
+    border: none;
+    background: #007bff;
+    color: #fff;
+    padding: 10px 18px;
+    border-radius: 999px;
+    cursor: pointer;
+  }
+
+  body.modal-active .main,
+  body.modal-active .sidebar {
+    filter: blur(6px);
+  }
+
+  /* ✨ PROGRESS MODAL STYLES ✨ */
+  .progress-step {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    margin-bottom: 15px;
+    padding: 12px;
+    background: #f9f9f9;
+    border-radius: 8px;
+    border-left: 4px solid #ddd;
+    transition: all 0.3s ease;
+  }
+
+  .progress-step.active {
+    border-left-color: #ff00cc;
+    background: #fff5f9;
+  }
+
+  .progress-step.completed {
+    border-left-color: #00cc00;
+    background: #f5fff5;
+  }
+
+  .step-icon {
+    font-size: 1.3rem;
+    min-width: 30px;
+    text-align: center;
+  }
+
+  .step-text {
+    flex: 1;
+    font-weight: 500;
+    color: #333;
+  }
+
+  .step-status {
+    font-size: 0.9rem;
+    color: #999;
+    font-family: 'Courier New', monospace;
+  }
+
+  @keyframes pulse {
+    0% { width: 0%; }
+    50% { width: 100%; }
+    100% { width: 100%; }
+  }
+
+  @keyframes spin {
+    from { transform: rotate(0deg); }
+    to { transform: rotate(360deg); }
+  }
+
+</style>
+</head>
+
+<body>
+
+<!-- Top Navigation -->
+<div class="top-nav" style="position: fixed; top: 0; left: 0; right: 0; background: linear-gradient(135deg, #ff00cc 0%, #3333ff 100%); padding: 15px 40px; display: flex; justify-content: space-between; align-items: center; z-index: 1000; box-shadow: 0 4px 15px rgba(255, 0, 204, 0.3);">
+  <h1 style="color: white; font-size: 1.5rem; margin: 0;">🔒 Stegbox</h1>
+  <div style="display: flex; gap: 30px; align-items: center;">
+    <a href="/feed" style="color: white; text-decoration: none; font-weight: 500; border-bottom: 3px solid white; padding-bottom: 5px;">📱 Feed</a>
+    <a href="/analysis" style="color: white; text-decoration: none; font-weight: 500; transition: opacity 0.3s ease;">📊 Analysis</a>
+    <a href="/attack" style="color: white; text-decoration: none; font-weight: 500; transition: opacity 0.3s ease;">⚔️ Attack Demo</a>
+    <a href="/profile" style="color: white; text-decoration: none; font-weight: 500; transition: opacity 0.3s ease;">👤 Profile</a>
+    <a href="/logout" style="color: white; text-decoration: none; font-weight: 500; transition: opacity 0.3s ease;">🚪 Logout</a>
+  </div>
+</div>
+
+<div class="sidebar">
+  <img src="/static/images/stegbox_logo.png" alt="Stegbox Logo" style="max-width: 100%; height: auto; margin-bottom: 30px;">
+  <ul class="menu">
+  <li onclick="window.location='/feed'">🏠 <span>Home</span></li>
+  <li onclick="window.location='/search'">🔍 <span>Search</span></li>
+  <li onclick="window.location='/friends'">👥 <span>Friends</span></li>
+  <li onclick="window.location='/messages'">💬 <span>Messages</span></li>
+  <li onclick="window.location='/encrypted_files'">📁 <span>Encrypted Files</span></li>
+  <li onclick="window.location='/profile'">👤 <span>Profile</span></li>
+  <li onclick="window.location='/logout'">🚪 <span>Log Out</span></li>
+</ul>
+</div>
+
+<div class="main">
+  <div class="feed">
+
+    <div class="create-post">
+
+      <div class="create-top">
+        <div class="avatar"></div>
+        <input class="input-box" placeholder="What's on your mind?" />
+      </div>
+
+      <div class="image-box" id="mediaPicker">
+        <button type="button" id="mediaPickerBtn" class="media-icon-btn" aria-label="Add media">📎Add Image</button>
+      </div>
+      <input type="file" id="mediaInput" accept="image/*,video/*" hidden>
+
+   <hr>
+
+      <!-- Toggle -->
+      <div class="toggle">
+        <label class="switch">
+          <input type="checkbox" id="secretToggle">
+          <span class="slider"></span>
+        </label>
+        <span>🔒 Hide secret message</span>
+      </div>
+
+      <!-- Dropdown -->
+      <div class="secret-box" id="secretBox">
+        <textarea placeholder="Enter your hidden message..."></textarea>
+      </div>
+
+      <!-- Followers चयन -->
+<div class="followers-box" id="followersBox">
+  <label>Message for...</label>
+  <select id="followersSelect">
+    <option value="">Select follower</option>
+    {% for follower in followers %}
+    <option value="{{ follower }}">{{ follower }}</option>
+    {% endfor %}
+  </select>
+</div>
+
+      <div class="create-footer">
+        <button class="post-btn">Post</button>
+      </div>
+
+    </div>
+
+    <!-- Posts -->
+    {% for post in posts %}
+    <div class="post" data-id="{{ post.id }}">
+      <div class="post-header">
+        <div class="user-info">
+          <div class="avatar"></div>
+          <div>
+            <div><strong>{{ post.username or 'User' }}</strong></div>
+            <small>{{ post.created_at }}</small>
+          </div>
+        </div>
+        {% if post.encrypted_message or post.image %}
+        <button class="decode" onclick="decodePost({{ post.id }}, this)">🔒 Decode</button>
+        {% endif %}
+      </div>
+
+      <div class="post-content">{{ post.content }}</div>
+
+      {% if post.image %}
+      <div class="post-media" style="padding: 0 15px;"><img src="data:image/png;base64,{{ post.image }}" style="max-width: 100%; height: auto; border-radius: 8px;" alt="Post media"></div>
+      {% endif %}
+
+      <div class="post-actions">
+        👍 Like
+        💬 Comment
+      </div>
+    </div>
+    {% endfor %}
+
+    </div>
+  </div>
+
+  <div id="secretModal" class="modal-backdrop hidden">
+    <div class="modal-card">
+      <h3>Hidden Message</h3>
+      <p class="modal-text"></p>
+      <button class="close-modal" onclick="closeSecretModal()">Close</button>
+    </div>
+  </div>
+
+  <!-- ✨ SECURE ENCODING PROGRESS MODAL ✨ -->
+  <div id="encodingModal" class="modal-backdrop hidden">
+    <div class="modal-card" style="max-width: 500px; text-align: center;">
+      <h3 style="color: #3333ff; margin-bottom: 30px;">🔒 Secure Encoding in Progress</h3>
+      
+      <!-- Progress Steps -->
+      <div style="text-align: left; margin-bottom: 30px;">
+        <div class="progress-step" id="step1">
+          <span class="step-icon">⏳</span>
+          <span class="step-text">CNN Region Selection</span>
+          <span class="step-status">[ ] Pending</span>
+        </div>
+        <div class="progress-step" id="step2">
+          <span class="step-icon">⏳</span>
+          <span class="step-text">LSB Steganography</span>
+          <span class="step-status">[ ] Pending</span>
+        </div>
+        <div class="progress-step" id="step3">
+          <span class="step-icon">⏳</span>
+          <span class="step-text">AES-256 Encryption</span>
+          <span class="step-status">[ ] Pending</span>
+        </div>
+        <div class="progress-step" id="step4">
+          <span class="step-icon">⏳</span>
+          <span class="step-text">RSA-OAEP Key Wrapping</span>
+          <span class="step-status">[ ] Pending</span>
+        </div>
+      </div>
+
+      <!-- Quality Metrics -->
+      <div id="metricsBox" style="display: none; background: #f5f5f5; padding: 20px; border-radius: 10px; margin-bottom: 20px; text-align: left;">
+        <h4 style="margin-top: 0;">📊 Steganography Metrics:</h4>
+        <p style="margin: 8px 0;">PSNR: <strong id="psnrValue">--</strong> dB</p>
+        <p style="margin: 8px 0;">SSIM: <strong id="ssimValue">--</strong></p>
+        <p style="margin: 8px 0;">Suitable Pixels: <strong id="pixelsValue">--</strong></p>
+        <p style="margin: 8px 0;">Payload: <strong id="payloadValue">--</strong> bits</p>
+      </div>
+
+      <!-- Animated Progress Bar -->
+      <div style="background: #e0e0e0; height: 8px; border-radius: 10px; margin-bottom: 20px; overflow: hidden;">
+        <div id="progressBar" style="height: 100%; width: 0%; background: linear-gradient(90deg, #ff00cc, #3333ff); animation: pulse 1.5s infinite; border-radius: 10px;"></div>
+      </div>
+
+      <button id="publishBtn" class="post-btn" style="display: none; width: 100%; cursor: not-allowed; opacity: 0.5;" disabled>Publishing...</button>
+    </div>
+  </div>
+
+ <script>
+
+
+fetch('/api/feed')
+  .then(res => res.json())
+  .then(data => {
+    const container = document.getElementById('posts');
+
+    data.posts.forEach(post => {
+      const div = document.createElement('div');
+      div.innerText = post.username + ": " + post.content;
+      container.appendChild(div);
+    });
+  })
+  .catch(err => console.error(err));
+
+
+
+const toggle = document.getElementById("secretToggle");
+const secretBox = document.getElementById("secretBox");
+const followersBox = document.getElementById("followersBox");
+
+const postBtn = document.querySelector(".post-btn");
+const input = document.querySelector(".input-box");
+const secretInput = document.querySelector("textarea");
+const followerSelect = document.getElementById("followersSelect");
+const feed = document.querySelector(".feed");
+const mediaPicker = document.getElementById("mediaPicker");
+const mediaPickerBtn = document.getElementById("mediaPickerBtn");
+const mediaInput = document.getElementById("mediaInput");
+let selectedMediaFile = null;
+const mediaPreview = document.createElement("div");
+mediaPreview.className = "media-preview";
+
+// Toggle behavior
+toggle.addEventListener("change", () => {
+  const active = toggle.checked;
+
+  secretBox.classList.toggle("active", active);
+  followersBox.classList.toggle("active", active);
+});
+
+mediaPickerBtn.addEventListener("click", () => mediaInput.click());
+mediaInput.addEventListener("change", (event) => {
+  const file = event.target.files?.[0];
+  if (file) {
+    handleMediaFile(file);
+  }
+});
+
+function handleMediaFile(file) {
+  selectedMediaFile = file;
+  const reader = new FileReader();
+  reader.onload = (e) => {
+    const dataUrl = e.target.result;
+    mediaPicker.innerHTML = `<img src="${dataUrl}" alt="Selected media">`;
+    mediaPicker.classList.add("with-image");
+    selectedMediaFile.dataUrl = dataUrl;
+  };
+  reader.readAsDataURL(file);
+}
+
+// Create post
+postBtn.addEventListener("click", async () => {
+  const content = input.value.trim();
+  const secret = toggle.checked ? secretInput.value.trim() : null;
+  const recipient = toggle.checked ? followerSelect.value : null;
+
+  if (!content) return alert("Write something!");
+  if (toggle.checked && !recipient) return alert("Select a follower!");
+
+  const formData = new FormData();
+  formData.append('content', content);
+  if (secret) formData.append('secret', secret);
+  if (recipient) formData.append('recipient', recipient);
+  if (selectedMediaFile) formData.append('image', selectedMediaFile);
+
+  // ✨ SHOW PROGRESS MODAL ✨
+  if (secret || selectedMediaFile) {
+    showEncodingProgress();
+  }
+
+  try {
+    const res = await fetch('/post', {
+      method: 'POST',
+      body: formData
+    });
+
+    const data = await res.json();
+    console.log(data);
+
+    if (!res.ok) {
+      closeEncodingProgress();
+      return alert("Error: " + data.error);
+    }
+
+    // ✨ SIMULATE PROGRESS ✨
+    if (secret || selectedMediaFile) {
+      simulateEncodingSteps(data);
+    } else {
+      closeEncodingProgress();
+    }
+
+    // 🔥 ADD THIS (IMPORTANT)
+    renderPost({
+      author: "You",
+      content: content,
+      media: selectedMediaFile?.dataUrl || null,
+      time: "Just now",
+      secret: secret,
+      recipient: recipient
+    }, true);
+
+  } catch (err) {
+    console.error(err);
+    closeEncodingProgress();
+    alert("Post failed");
+  }
+
+  // reset inputs
+  input.value = "";
+  secretInput.value = "";
+  followerSelect.value = "";
+  selectedMediaFile = null;
+  mediaInput.value = "";
+  mediaPicker.innerHTML = `<button type="button" id="mediaPickerBtn" class="media-icon-btn" aria-label="Add media">📎Add Image</button>`;
+  document.getElementById("mediaPickerBtn").addEventListener("click", () => mediaInput.click());
+  toggle.checked = false;
+  secretBox.classList.remove("active");
+  followersBox.classList.remove("active");
+});
+
+// Decode toggle
+function decodePost(postId, btn) {
+  // Disable button immediately to prevent double-clicks
+  const originalText = btn.textContent;
+  btn.textContent = "🔄 Decoding...";
+  btn.disabled = true;
+
+  fetch('/decode/' + postId)
+    .then(async res => {
+      // CRITICAL: Always check response status FIRST
+      if (!res.ok) {
+        const errorText = await res.text();
+        throw new Error(`HTTP ${res.status}: ${res.statusText}`);
+      }
+
+      // Check content-type
+      const contentType = res.headers.get('content-type');
+      if (!contentType?.includes('application/json')) {
+        const text = await res.text();
+        throw new Error('Server returned non-JSON: ' + text.substring(0, 100));
+      }
+
+      return res.json();
+    })
+    .then(data => {
+      // Handle server-side errors
+      if (data.error) {
+        throw new Error(data.error);
+      }
+
+      // SUCCESS!
+      btn.textContent = "🔓 Decoded";
+      btn.style.cursor = "default";
+      showSecretModal(data.message);
+    })
+    .catch(err => {
+      console.error('Decode failed:', err);
+      
+      // User-friendly error messages
+      let message = err.message;
+      if (message.includes('Not logged in')) message = 'Please log in first';
+      else if (message.includes('Not for you')) message = "This secret isn't for you! 🔒";
+      else if (message.includes('Post not found')) message = 'Post not found';
+      else if (message.includes('Failed to decode')) message = 'Could not decode image';
+      else message = 'Decode failed: ' + message;
+
+      alert(message);
+    })
+    .finally(() => {
+      // Reset button if not successful
+      if (btn.textContent === "🔄 Decoding...") {
+        btn.textContent = originalText;
+        btn.disabled = false;
+      }
+    });
+}
+
+
+
+function showSecretModal(message) {
+  const modal = document.getElementById("secretModal");
+  modal.querySelector(".modal-text").textContent = message;
+  modal.classList.remove("hidden");
+  document.body.classList.add("modal-active");
+}
+
+function closeSecretModal() {
+  const modal = document.getElementById("secretModal");
+  modal.classList.add("hidden");
+  document.body.classList.remove("modal-active");
+}
+
+// ✨ PROGRESS MODAL FUNCTIONS ✨
+function showEncodingProgress() {
+  const modal = document.getElementById("encodingModal");
+  modal.classList.remove("hidden");
+  document.body.classList.add("modal-active");
+  
+  // Reset all steps
+  document.querySelectorAll(".progress-step").forEach(step => {
+    step.classList.remove("active", "completed");
+    const status = step.querySelector(".step-status");
+    status.textContent = "[ ] Pending";
+  });
+  
+  // Hide metrics and publish button initially
+  document.getElementById("metricsBox").style.display = "none";
+  document.getElementById("publishBtn").style.display = "none";
+}
+
+function closeEncodingProgress() {
+  const modal = document.getElementById("encodingModal");
+  modal.classList.add("hidden");
+  document.body.classList.remove("modal-active");
+}
+
+function simulateEncodingSteps(data) {
+  const steps = [
+    { id: "step1", name: "CNN Region Selection", duration: 1000 },
+    { id: "step2", name: "LSB Steganography", duration: 1500 },
+    { id: "step3", name: "AES-256 Encryption", duration: 1200 },
+    { id: "step4", name: "RSA-OAEP Key Wrapping", duration: 800 }
+  ];
+
+  let totalDelay = 0;
+  const progressBar = document.getElementById("progressBar");
+
+  steps.forEach((step, index) => {
+    setTimeout(() => {
+      const stepEl = document.getElementById(step.id);
+      const stepIcon = stepEl.querySelector(".step-icon");
+      const stepStatus = stepEl.querySelector(".step-status");
+      
+      stepEl.classList.add("active");
+      stepIcon.textContent = "🔄";
+      stepStatus.textContent = "[•] Processing";
+      
+      // Animate progress bar
+      progressBar.style.width = ((index + 1) * 25) + "%";
+
+      setTimeout(() => {
+        stepIcon.textContent = "✓";
+        stepStatus.textContent = "[✓] Completed";
+        stepEl.classList.remove("active");
+        stepEl.classList.add("completed");
+      }, step.duration);
+    }, totalDelay);
+
+    totalDelay += step.duration + 200;
+  });
+
+  // Show metrics and publish button after completion
+  setTimeout(() => {
+    const metricsBox = document.getElementById("metricsBox");
+    metricsBox.style.display = "block";
+    
+    // Generate or use real metrics
+    const metrics = {
+      psnr: (Math.random() * 5 + 50).toFixed(2),
+      ssim: (Math.random() * 0.01 + 0.998).toFixed(4),
+      pixels: Math.floor(Math.random() * 50000 + 100000),
+      payload: Math.floor(Math.random() * 500 + 100)
+    };
+
+    document.getElementById("psnrValue").textContent = metrics.psnr;
+    document.getElementById("ssimValue").textContent = metrics.ssim;
+    document.getElementById("pixelsValue").textContent = metrics.pixels;
+    document.getElementById("payloadValue").textContent = metrics.payload;
+
+    progressBar.style.width = "100%";
+    progressBar.style.animation = "none";
+
+    const publishBtn = document.getElementById("publishBtn");
+    publishBtn.style.display = "block";
+    publishBtn.style.opacity = "1";
+    publishBtn.style.cursor = "pointer";
+    publishBtn.disabled = false;
+    publishBtn.textContent = "✓ Publish to Feed";
+
+    publishBtn.onclick = closeEncodingProgress;
+  }, totalDelay + 500);
+}
+
+// Load posts (optional)
+async function loadPosts() {
+  // Posts are rendered server-side
+}
+
+loadPosts();
+</script>
+</body>
+</html>

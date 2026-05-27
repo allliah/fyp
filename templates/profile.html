@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Profile - Stegbox</title>
+    <link rel="stylesheet" href="/static/css/sidebar.css">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { 
+            font-family: Arial, sans-serif; 
+            background: #f5f5f5; 
+            min-height: 100vh; 
+            display: flex;
+        }
+        .main {
+            flex: 1;
+            margin-left: 200px;
+            padding: 40px;
+            width: calc(100% - 200px);
+        }
+        .container { max-width: 900px; }
+        .profile-card { background: white; border-radius: 10px; padding: 30px; margin-bottom: 30px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); }
+        .profile-header { display: flex; gap: 20px; align-items: start; margin-bottom: 20px; }
+        .avatar { width: 120px; height: 120px; border-radius: 50%; background: #ddd; display: flex; align-items: center; justify-content: center; font-size: 50px; }
+        .profile-info { flex: 1; }
+        .profile-info h1 { color: #333; margin-bottom: 10px; }
+        .profile-info p { color: #666; margin: 5px 0; }
+        .bio { background: #f5f5f5; padding: 15px; border-radius: 5px; margin: 10px 0; }
+        .friends-section { background: #f9f9f9; padding: 20px; border-radius: 5px; margin-top: 20px; }
+        .friends-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 15px; margin-top: 15px; }
+        .friend-card { text-align: center; padding: 15px; background: white; border-radius: 5px; box-shadow: 0 2px 5px rgba(0,0,0,0.1); }
+        .friend-card img { width: 80px; height: 80px; border-radius: 50%; margin-bottom: 10px; }
+        button { background: #007bff; color: white; border: none; padding: 10px 20px; border-radius: 5px; cursor: pointer; font-size: 14px; }
+        button:hover { background: #0056b3; }
+        .edit-form { background: #f5f5f5; padding: 20px; border-radius: 5px; margin-top: 20px; }
+        .edit-form textarea { width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 5px; font-family: Arial; }
+        .posts-section { margin-top: 30px; }
+        .post-card { background: #f9f9f9; padding: 15px; border-radius: 5px; margin-bottom: 15px; border-left: 4px solid #007bff; }
+        .post-card p { color: #666; margin: 10px 0; }
+    </style>
+</head>
+<body>
+    <div class="sidebar">
+        <img src="/static/images/stegbox_logo.png" alt="Stegbox Logo" style="max-width: 100%; height: auto; margin-bottom: 30px;">
+        <ul class="menu">
+            <li onclick="window.location='/feed'">🏠 <span>Home</span></li>
+            <li onclick="window.location='/search'">🔍 <span>Search</span></li>
+            <li onclick="window.location='/friends'">👥 <span>Friends</span></li>
+            <li onclick="window.location='/messages'">💬 <span>Messages</span></li>
+            <li onclick="window.location='/encrypted_files'">📁 <span>Encrypted Files</span></li>
+            <li onclick="window.location='/profile'">👤 <span>Profile</span></li>
+            <li onclick="window.location='/logout'">🚪 <span>Log Out</span></li>
+        </ul>
+    </div>
+
+    <div class="main">
+        <div class="container">
+            <div class="profile-card">
+                <div class="profile-header">
+                    <div class="avatar">👤</div>
+                    <div class="profile-info">
+                        <h1>{{ user.username }}</h1>
+                        <p><strong>Email:</strong> {{ user.email }}</p>
+                        {% if user.bio %}
+                            <div class="bio">{{ user.bio }}</div>
+                        {% endif %}
+                    </div>
+                </div>
+
+                {% if is_own_profile %}
+                <div class="edit-form">
+                    <h3>Edit Profile</h3>
+                    <form id="profileForm" onsubmit="updateProfile(event)">
+                        <label>Bio:</label>
+                        <textarea name="bio" placeholder="Tell us about yourself...">{{ user.bio or '' }}</textarea>
+                        <button type="submit" style="margin-top: 10px;">Update Profile</button>
+                    </form>
+                </div>
+                {% endif %}
+
+                <div class="friends-section">
+                    <h3>Friends ({{ friends|length }})</h3>
+                    {% if friends %}
+                        <div class="friends-grid">
+                            {% for friend in friends %}
+                            <div class="friend-card">
+                                <div style="font-size: 30px; margin-bottom: 10px;">👤</div>
+                                <strong>{{ friend.username }}</strong>
+                                <br>
+                                
+                            </div>
+                            {% endfor %}
+                        </div>
+                    {% else %}
+                        <p style="color: #999; margin-top: 10px;">No friends yet</p>
+                    {% endif %}
+            </div>
+        </div>
+
+        <div class="posts-section">
+            <h2>Posts</h2>
+            {% if posts %}
+                {% for post in posts %}
+                <div class="post-card">
+                    <strong>{{ post.content }}</strong>
+                    <p style="font-size: 12px; color: #999;">{{ post.created_at }}</p>
+                </div>
+                {% endfor %}
+            {% else %}
+                <p style="color: #999;">No public posts yet</p>
+            {% endif %}
+        </div>
+    </div>
+
+    <script>
+        function updateProfile(event) {
+            event.preventDefault();
+            const bio = document.querySelector('textarea[name="bio"]').value;
+            const formData = new FormData();
+            formData.append('bio', bio);
+            
+            fetch('/api/profile/update', {
+                method: 'POST',
+                body: formData
+            })
+            .then(r => r.json())
+            .then(data => {
+                if (data.success) {
+                    alert('Profile updated!');
+                    location.reload();
+                } else {
+                    alert('Error: ' + data.error);
+                }
+            });
+        }
+    </script>
+</body>
+</html>

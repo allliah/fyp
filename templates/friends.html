@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Friends UI</title>
+<link rel="stylesheet" href="/static/css/sidebar.css">
+<style>
+    * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+        font-family: Arial, sans-serif;
+    }
+
+    body {
+        display: flex;
+        background: #f5f5f5;
+        min-height: 100vh;
+    }
+
+    /* Sidebar styles are in sidebar.css */
+
+    /* Main content */
+    .main {
+        flex: 1;
+        padding: 40px;
+    }
+
+    .title {
+        font-size: 20px;
+        margin-bottom: 20px;
+    }
+
+    /* Card styles */
+    .card {
+        background: #fff;
+        border-radius: 20px;
+        padding: 15px 20px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        margin-bottom: 20px;
+        border: 1px solid #ddd;
+    }
+
+    .user {
+        display: flex;
+        align-items: center;
+    }
+
+    .avatar {
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        background: #ccc;
+        margin-right: 15px;
+    }
+
+    .btn {
+        padding: 8px 16px;
+        border-radius: 20px;
+        border: none;
+        background: #4da3ff;
+        color: #fff;
+        cursor: pointer;
+    }
+
+    .btn:hover {
+        background: #2c85e8;
+    }
+
+    .section-title {
+        margin: 30px 0 10px;
+        font-weight: bold;
+        color: #444;
+    }
+</style>
+</head>
+<body>
+
+<!-- Sidebar -->
+<div class="sidebar">
+    <img src="/static/images/stegbox_logo.png" alt="Stegbox Logo" style="max-width: 100%; height: auto; margin-bottom: 30px;">
+    <ul class="menu">
+    <li onclick="window.location='/feed'">🏠 <span>Home</span></li>
+    <li onclick="window.location='/search'">🔍 <span>Search</span></li>
+    <li onclick="window.location='/friends'">👥 <span>Friends</span></li>
+    <li onclick="window.location='/messages'">💬 <span>Messages</span></li>
+    <li onclick="window.location='/encrypted_files'">📁 <span>Encrypted Files</span></li>
+    <li onclick="window.location='/profile'">👤 <span>Profile</span></li>
+    <li onclick="window.location='/logout'">🚪 <span>Log Out</span></li>
+</ul>
+</div>
+
+<!-- Main Content -->
+<div class="main">
+    <div class="title">Friends</div>
+
+    <!-- Friends list -->
+    <div id="friendsList">
+    {% for friend in friends %}
+    <div class="card friend-card">
+        <div class="user">
+            <div class="avatar"></div>
+            <div>{{ friend.username }}</div>
+        </div>
+        <button class="btn" disabled>Friend</button>
+    </div>
+    {% endfor %}
+    </div>
+
+    <!-- Suggestions -->
+    <div class="section-title">Suggestions</div>
+    <div id="suggestionsList">
+    {% for suggestion in suggestions %}
+    <div class="card suggestion-card">
+        <div class="user">
+            <div class="avatar"></div>
+            <div>{{ suggestion.username }}</div>
+        </div>
+        <button class="btn" onclick="addFriend('{{ suggestion.username }}', this)">Add friend</button>
+    </div>
+    {% endfor %}
+    </div>
+</div>
+
+<script>
+function goTo(page) {
+    window.location.href = page;
+}
+
+function addFriend(username, btn) {
+    fetch('/api/friends/add', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ username: username })
+    })
+    .then(res => res.json())
+    .then(data => {
+        if (data.success) {
+            const card = btn.closest('.card');
+            const friendCard = document.createElement('div');
+            friendCard.className = 'card friend-card';
+            friendCard.innerHTML = `
+                <div class="user">
+                    <div class="avatar"></div>
+                    <div>${username}</div>
+                </div>
+                <button class="btn" disabled>Friend</button>
+            `;
+            document.getElementById('friendsList').appendChild(friendCard);
+            card.remove();
+        } else {
+            alert('Error: ' + data.error);
+        }
+    })
+    .catch(err => alert('Error: ' + err));
+}
+</script>
+
+</body>
+</html>

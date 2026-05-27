@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Messages - Stegbox</title>
+    <link rel="stylesheet" href="/static/css/sidebar.css">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { 
+            font-family: Arial, sans-serif; 
+            background: #f5f5f5; 
+            min-height: 100vh; 
+            display: flex;
+        }
+        .main {
+            flex: 1;
+            margin-left: 200px;
+            padding: 40px;
+            width: calc(100% - 200px);
+        }
+        .container { max-width: 900px; width: 100%; }
+        .chat-box { background: white; border-radius: 10px; padding: 20px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); }
+        .messages { display: flex; flex-direction: column; gap: 10px; height: 400px; overflow-y: auto; margin-bottom: 20px; padding-bottom: 10px; }
+        .message { padding: 10px 15px; border-radius: 5px; max-width: 70%; word-wrap: break-word; }
+        .message.sent { align-self: flex-end; background: #007bff; color: white; }
+        .message.received { align-self: flex-start; background: #e9ecef; color: #333; }
+        .input-area { display: flex; gap: 10px; }
+        .input-area input { flex: 1; padding: 10px; border: 1px solid #ddd; border-radius: 5px; }
+        .input-area button { padding: 10px 20px; background: #007bff; color: white; border: none; border-radius: 5px; cursor: pointer; }
+        .input-area button:hover { background: #0056b3; }
+        .friends-list { background: white; border-radius: 10px; padding: 20px; margin-bottom: 20px; }
+        .friend-item { padding: 12px; margin: 8px 0; background: #f5f5f5; border-radius: 5px; cursor: pointer; border-left: 3px solid #ddd; }
+        .friend-item:hover { background: #eaf4ff; border-left-color: #007bff; }
+        .friend-item.active { background: #eaf4ff; border-left-color: #007bff; font-weight: bold; }
+        .no-friend { text-align: center; color: #999; padding: 40px 20px; }
+        .title { font-size: 24px; margin-bottom: 20px; font-weight: bold; color: #333; }
+    </style>
+</head>
+<body>
+    <div class="sidebar">
+        <img src="/static/images/stegbox_logo.png" alt="Stegbox Logo" style="max-width: 100%; height: auto; margin-bottom: 30px;">
+        <ul class="menu">
+            <li onclick="window.location='/feed'">🏠 <span>Home</span></li>
+            <li onclick="window.location='/search'">🔍 <span>Search</span></li>
+            <li onclick="window.location='/friends'">👥 <span>Friends</span></li>
+            <li onclick="window.location='/messages'">💬 <span>Messages</span></li>
+            <li onclick="window.location='/encrypted_files'">📁 <span>Encrypted Files</span></li>
+            <li onclick="window.location='/profile'">👤 <span>Profile</span></li>
+            <li onclick="window.location='/logout'">🚪 <span>Log Out</span></li>
+        </ul>
+    </div>
+
+    <div class="main">
+        <div class="container">
+            <h1 class="title">💬 Messages</h1>
+            
+            <div class="friends-list">
+                <h3>Friends</h3>
+                {% if friends %}
+                    {% for friend in friends %}
+                    <div class="friend-item" onclick="selectFriend('{{ friend.id }}', '{{ friend.username }}')">
+                        {{ friend.username }}
+                    </div>
+                    {% endfor %}
+                {% else %}
+                    <p style="color: #999; font-size: 14px;">No friends yet</p>
+                {% endif %}
+            </div>
+
+            <div class="chat-box" id="chatBox" style="display:none;">
+                <div style="margin-bottom: 15px; padding-bottom: 15px; border-bottom: 1px solid #ddd;">
+                    <h3 id="chatTitle"></h3>
+                </div>
+                <div class="messages" id="messages"></div>
+                <div class="input-area">
+                    <input type="text" id="messageInput" placeholder="Type a message..." />
+                    <button onclick="sendMessage()">Send</button>
+                </div>
+            </div>
+
+            <div class="no-friend" id="noFriendMsg">
+                Select a friend to start messaging
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let selectedFriendId = null;
+
+        function selectFriend(friendId, username) {
+            selectedFriendId = friendId;
+            document.getElementById('chatTitle').textContent = username;
+            document.getElementById('chatBox').style.display = 'block';
+            document.getElementById('noFriendMsg').style.display = 'none';
+            
+            // Mark as active
+            document.querySelectorAll('.friend-item').forEach(el => el.classList.remove('active'));
+            event.target.closest('.friend-item').classList.add('active');
+            
+            loadMessages(friendId);
+        }
+
+        function loadMessages(friendId) {
+            fetch(`/api/messages/${friendId}`)
+                .then(r => r.json())
+                .then(data => {
+                    const messagesDiv = document.getElementById('messages');
+                    messagesDiv.innerHTML = '';
+                    data.forEach(msg => {
+                        const div = document.createElement('div');
+                        div.className = 'message ' + (msg.sender_id === '{{ session.user }}' ? 'sent' : 'received');
+                        div.textContent = msg.content;
+                        messagesDiv.appendChild(div);
+                    });
+                    messagesDiv.scrollTop = messagesDiv.scrollHeight;
+                })
+                .catch(err => console.error(err));
+        }
+
+        function sendMessage() {
+            const input = document.getElementById('messageInput');
+            if (!input.value || !selectedFriendId) return;
+
+            fetch('/api/messages/send', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    recipient_id: selectedFriendId,
+                    content: input.value
+                })
+            })
+            .then(r => r.json())
+            .then(data => {
+                input.value = '';
+                loadMessages(selectedFriendId);
+            })
+            .catch(err => console.error(err));
+        }
+    </script>
+</body>
+</html>
+
+        <div class="chat-area">
+            <div id="chatContainer" style="display: none;">
+                <h2 id="friendName" style="margin-bottom: 20px;"></h2>
+                <div class="messages" id="messagesList"></div>
+                <div class="input-area">
+                    <input type="text" id="messageInput" placeholder="Type your message..." />
+                    <button onclick="sendMessage()">Send</button>
+                </div>
+            </div>
+            <div class="no-friend" id="noFriend">
+                <p>Select a friend to start messaging</p>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let currentFriendId = null;
+
+        function selectFriend(friendId, friendName) {
+            currentFriendId = friendId;
+            document.getElementById('friendName').textContent = friendName;
+            document.getElementById('chatContainer').style.display = 'block';
+            document.getElementById('noFriend').style.display = 'none';
+            loadMessages();
+        }
+
+        function loadMessages() {
+            if (!currentFriendId) return;
+            
+            fetch(`/api/messages/${currentFriendId}`)
+                .then(r => r.json())
+                .then(messages => {
+                    const list = document.getElementById('messagesList');
+                    list.innerHTML = '';
+                    messages.forEach(msg => {
+                        const div = document.createElement('div');
+                        div.className = 'message ' + (msg.sender_id === '{{ user.id }}' ? 'sent' : 'received');
+                        div.textContent = msg.content;
+                        list.appendChild(div);
+                    });
+                    list.scrollTop = list.scrollHeight;
+                });
+        }
+
+        function sendMessage() {
+            const input = document.getElementById('messageInput');
+            const content = input.value.trim();
+            
+            if (!content || !currentFriendId) return;
+            
+            fetch('/api/messages/send', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    recipient_id: currentFriendId,
+                    content: content
+                })
+            })
+            .then(r => r.json())
+            .then(data => {
+                if (data.success) {
+                    input.value = '';
+                    loadMessages();
+                }
+            });
+        }
+
+        document.getElementById('messageInput').addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') sendMessage();
+        });
+    </script>
+</body>
+</html>

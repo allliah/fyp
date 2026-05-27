@@ -1,0 +1,16 @@
+services:
+  - type: web
+    name: stegbox-app
+    env: python
+    plan: free
+    buildCommand: pip install -r requirements.txt
+    startCommand: gunicorn app:app
+    envVars:
+      - key: PYTHON_VERSION
+        value: 3.11.7
+      - key: FLASK_ENV
+        value: production
+      - key: FLASK_DEBUG
+        value: false
+      - key: SECRET_KEY
+        generateValue: true
