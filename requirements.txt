@@ -85,7 +85,7 @@ tifffile==2026.3.3
 typing-inspection==0.4.2
 typing_extensions==4.15.0
 urllib3==2.7.0
-websockets==16.0
+websockets==15.0
 Werkzeug==2.3.7
 wheel==0.47.0
 wrapt==2.1.2
