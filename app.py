@@ -550,6 +550,7 @@ def feed_api():
         supabase.table("posts")
         .select("*")
         .order("created_at", desc=True)
+        .range(0, 9)
         .execute()
         .data
     )
