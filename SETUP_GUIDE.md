@@ -38,12 +38,19 @@ FLASK_ENV=development
 
 ## 🚀 Step 3: Run Your Application
 
-### 3.1 Install Dependencies
+# Open PowerShell in project directory
+# 3.1 Create virtual environment
+python -m venv .venv
+
+### 3.2 Install Dependencies
 ```bash
 pip install -r requirements.txt
 ```
 
-### 3.2 Start Flask Server
+# 3.3 Activate virtual environment
+.venv\Scripts\Activate.ps1
+
+### 3.4 Start Flask Server
 ```bash
 python app.py
 ```
