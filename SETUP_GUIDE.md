@@ -14,13 +14,6 @@
 3. Execute each SQL block in order
 4. Wait for all tables to be created successfully
 
-### 1.3 Enable Row Level Security (RLS)
-The SQL blocks in SUPABASE_SETUP.md already include RLS policies. Verify they're enabled:
-1. Go to **Authentication** → **Policies**
-2. Ensure all tables have RLS enabled
-3. Verify policies are applied
-
----
 
 ## 📁 Step 2: Update Environment Variables
 
